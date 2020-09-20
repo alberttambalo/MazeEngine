@@ -8,7 +8,7 @@ import math
 pygame.init()
 
 WIDTH, HEIGHT = 500, 500
-TILEWIDTH, TILEHEIGHT = 100, 100
+TILEWIDTH, TILEHEIGHT = 50, 50
 WIN = pygame.display.set_mode((WIDTH,HEIGHT))
 class Tile:
     def __init__(self,x,y,r,g,b):
@@ -17,21 +17,20 @@ class Tile:
         self.r = r
         self.g = g
         self.b = b
-        self.links = [0,0,0,0]
+        self.links = [1,1,1,1]
 
     def draw(self):
-        pygame.draw.rect(WIN,(self.r,self.g,self.b),(self.x * (WIDTH/TILEWIDTH),self.y * (HEIGHT/TILEHEIGHT), WIDTH/TILEWIDTH, HEIGHT/TILEHEIGHT))
-        return
-        for i in range(4):
-            if self.links[i] == 0:
-                pygame.draw.line(WIN,(255,255,255),(self.x,self.y),(self.x + (WIDTH/TILEWIDTH),self.y), 5)
-            if self.links[i] == 1:
-                pygame.draw.line(WIN, (255, 255, 255), (self.x, self.y), (self.x + (WIDTH / TILEWIDTH), self.y), 5)
-            if self.links[i] == 2:
-                pygame.draw.line(WIN, (255, 255, 255), (self.x, self.y), (self.x + (WIDTH / TILEWIDTH), self.y), 5)
-            if self.links[i] == 3:
-                pygame.draw.line(WIN, (255, 255, 255), (self.x, self.y), (self.x, self.y + (HEIGHT/TILEHEIGHT)), 5)
-
+        xcoor = self.x * (WIDTH/TILEWIDTH)
+        ycoor = self.y * (HEIGHT/TILEHEIGHT)
+        pygame.draw.rect(WIN,(self.r,self.g,self.b),(xcoor,ycoor, WIDTH/TILEWIDTH, HEIGHT/TILEHEIGHT))
+        if self.links[0] == 1:
+            pygame.draw.line(WIN,(255,255,255),(xcoor,ycoor),(xcoor + (WIDTH/TILEWIDTH),ycoor), 2)
+        if self.links[1] == 1:
+            pygame.draw.line(WIN, (255, 255, 255), (xcoor + (WIDTH/TILEWIDTH), ycoor + (HEIGHT/TILEHEIGHT)), (xcoor + (WIDTH/TILEWIDTH), ycoor), 2)
+        if self.links[2] == 1:
+            pygame.draw.line(WIN, (255, 255, 255), (xcoor + (WIDTH/TILEWIDTH), ycoor + (HEIGHT/TILEHEIGHT)), (xcoor, ycoor + (HEIGHT/TILEHEIGHT)), 2)
+        if self.links[3] == 1:
+            pygame.draw.line(WIN, (255, 255, 255), (xcoor, ycoor), (xcoor, ycoor + (HEIGHT/TILEHEIGHT)), 2)
         return
 
 class Maze:
