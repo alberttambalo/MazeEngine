@@ -17,7 +17,7 @@ class Tile:
         self.r = r
         self.g = g
         self.b = b
-        self.links = [0,0,0,0]
+        self.links = [1,1,1,1]
 
     def draw(self):
         xcoor = self.x * (WIDTH/TILEWIDTH)
@@ -33,6 +33,10 @@ class Tile:
         if self.links[3] == 1:
             pygame.draw.line(WIN, (0, 0, 0), (xcoor, ycoor), (xcoor, ycoor + (HEIGHT/TILEHEIGHT)), 2)
         return
+
+    def setLink(self,n):
+        self.links[n] = 0
+
     def setRGB(self,r,g,b):
         self.r = r
         self.g = g
@@ -78,13 +82,21 @@ class MazeMaker:
         j = list(range(4))
         random.shuffle(j)
         for i in j:
-            if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()):
+            if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
+                m.getTile(x,y).setLink(0)
+                m.getTile(x,y-1).setLink(2)
                 self.visit(x,y-1,m)
-            elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()):
+            elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
+                m.getTile(x,y).setLink(1)
+                m.getTile(x+1,y).setLink(3)
                 self.visit(x+1,y,m)
-            elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()):
+            elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
+                m.getTile(x,y).setLink(2)
+                m.getTile(x,y+1).setLink(0)
                 self.visit(x,y+1,m)
-            elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()):
+            elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
+                m.getTile(x,y).setLink(3)
+                m.getTile(x-1,y).setLink(1)
                 self.visit(x-1,y,m)
 
 def main():
