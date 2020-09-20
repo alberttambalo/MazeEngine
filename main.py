@@ -71,6 +71,7 @@ class MazeMaker:
     h = {}
     def mazify(self, m):
         self.visit(0,0,m)
+        m.draw()
 
     def visit(self,x,y,m):
         print('VISITING ' + str(x) + ' ' + str(y))
@@ -83,21 +84,26 @@ class MazeMaker:
         random.shuffle(j)
         for i in j:
             if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
+                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
                 m.getTile(x,y).setLink(0)
                 m.getTile(x,y-1).setLink(2)
                 self.visit(x,y-1,m)
             elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
+                print('linking ' + str(x) + str(y) + ' and ' + str(x+1) + str(y))
                 m.getTile(x,y).setLink(1)
                 m.getTile(x+1,y).setLink(3)
                 self.visit(x+1,y,m)
             elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
+                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y+1))
                 m.getTile(x,y).setLink(2)
                 m.getTile(x,y+1).setLink(0)
                 self.visit(x,y+1,m)
             elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
+                print('linking ' + str(x) + str(y) + ' and ' + str(x-1) + str(y))
                 m.getTile(x,y).setLink(3)
                 m.getTile(x-1,y).setLink(1)
                 self.visit(x-1,y,m)
+
 
 def main():
     run = True
