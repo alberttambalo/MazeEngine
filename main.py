@@ -21,6 +21,7 @@ class Tile:
 
     def draw(self):
         pygame.draw.rect(WIN,(self.r,self.g,self.b),(self.x * (WIDTH/TILEWIDTH),self.y * (HEIGHT/TILEHEIGHT), WIDTH/TILEWIDTH, HEIGHT/TILEHEIGHT))
+        return
         for i in range(4):
             if self.links[i] == 0:
                 pygame.draw.line(WIN,(255,255,255),(self.x,self.y),(self.x + (WIDTH/TILEWIDTH),self.y), 5)
@@ -39,16 +40,13 @@ class Maze:
         for i in range(w):
             temp = []
             for j in range(h):
-                temp.append(Tile(j,i,0,0,0))
+                temp.append(Tile(j,i,randint(0,255),randint(0,255),randint(0,255)))
             self.tiles.append(temp)
 
     def draw(self):
         for i in self.tiles:
             for j in i:
                 j.draw()
-        for i in self.tiles:
-            for j in range(4):
-
 
 def main():
     run = True
