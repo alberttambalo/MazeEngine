@@ -2,30 +2,45 @@ import pygame
 import random
 from random import randint
 import tkinter as tk
+WIDTH, HEIGHT = 500, 500
+TILEWIDTH, TILEHEIGHT = 10, 10
+
 
 window = tk.Tk()
 window.title("Maze Engine")
-window.geometry("500x500")
+window.geometry("300x100")
 
+def inputCheck():
+    input = str(entryField1.get())
+    if int(input, 10) <= 0 or int(input,10) % 2 != 0:
+       warning = tk.Label(text="Invalid input!")
+       warning.grid(column=0,row=3)
+       return
+    else:
+        global TILEWIDTH, TILEHEIGHT
+        TILEWIDTH, TILEHEIGHT = int(input), int(input)
+        window.destroy()
+    return
+
+#label
 label = tk.Label(text="Enter size of square")
 label.grid(column=0,row=0)
 
+#entryfields
 entryField1 = tk.Entry()
 entryField1.grid(column=0,row=1)
 
-button1 = tk.Button(text="Generate Maze")
+#button
+button1 = tk.Button(text="Generate Maze", command=inputCheck)
 button1.grid(column=0,row=2)
-
-
-
 
 window.mainloop()
 
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Press Enter to Generate Maze')
 pygame.init()
 
-WIDTH, HEIGHT = 500, 500
-TILEWIDTH, TILEHEIGHT = 10, 10
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+
 class Tile:
     def __init__(self,x,y,r,g,b):
         self.x = x
