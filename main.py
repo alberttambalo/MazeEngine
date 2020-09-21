@@ -87,7 +87,6 @@ class Maze:
                 j.setRGB(randint(0,255),randint(0,255), randint(0,255))
                 j.resetLinks()
 
-
     def __init__(self,w,h):
         self.links = []
         self.tiles = []
@@ -160,6 +159,26 @@ class MazeMaker:
             else:
                 m.draw()
 
+class MazeSolver():
+    h = {}
+    def solve(self, m):
+        self.visit(0,0,m,n)
+
+    def visit(self,x,y,m,n):
+        m.getTile(x,y).setRGB(255,0,0)
+        m.getTile(x,y).draw()
+        self.h[m.getTile(x,y)] =  
+        j = [0, 1, 2, 3]
+        random.shuffle(j)
+        for i in j:
+            if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
+                self.visit(x,y-1,m)
+            elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
+                self.visit(x+1,y,m)
+            elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
+                self.visit(x,y+1,m)
+            elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
+                self.visit(x-1,y,m)
 
 def main():
 
@@ -167,9 +186,9 @@ def main():
     FPS = 120
     clock = pygame.time.Clock()
     #print('HERE')
-    M = [Maze(TILEWIDTH, TILEHEIGHT)]
+    M = Maze(TILEWIDTH, TILEHEIGHT)
     #print('134')
-    M[0].draw()
+    M.draw()
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -179,7 +198,11 @@ def main():
                 if event.key == pygame.K_RETURN:
                     WIN.fill((255,255,255))
                     maker = MazeMaker()
-                    maker.mazify(M[0])
+                    maker.mazify(M)
                     #M.pop(0)
+                if event.key == pygame.K_RSHIFT:
+                    print('here')
+                    solver = MazeSolver()
+                    solver.solve(M)
         pygame.display.update()
 main()
