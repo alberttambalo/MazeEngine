@@ -53,7 +53,7 @@ class Tile:
     def draw(self):
         xcoor = self.x * (WIDTH/TILEWIDTH)
         ycoor = self.y * (HEIGHT/TILEHEIGHT)
-        #print('drawing ' + str(xcoor) + ' ' + str(ycoor) + ' ' + str(self.r) + str(self.g) + str(self.b) + str(self.links))
+        print('drawing ' + str(xcoor) + ' ' + str(ycoor) + ' ' + str(self.r) + str(self.g) + str(self.b) + str(self.links))
         pygame.draw.rect(WIN,(self.r,self.g,self.b),(xcoor,ycoor, WIDTH/TILEWIDTH, HEIGHT/TILEHEIGHT))
         if self.links[0] == 1:
             pygame.draw.line(WIN,(0,0,0),(xcoor,ycoor),(xcoor + (WIDTH/TILEWIDTH),ycoor), 2)
@@ -63,6 +63,7 @@ class Tile:
             pygame.draw.line(WIN, (0, 0, 0), (xcoor + (WIDTH/TILEWIDTH), ycoor + (HEIGHT/TILEHEIGHT)), (xcoor, ycoor + (HEIGHT/TILEHEIGHT)), 2)
         if self.links[3] == 1:
             pygame.draw.line(WIN, (0, 0, 0), (xcoor, ycoor), (xcoor, ycoor + (HEIGHT/TILEHEIGHT)), 2)
+
         pygame.display.update()
         return
 
@@ -88,8 +89,8 @@ class Maze:
 
 
     def __init__(self,w,h):
-        links = []
-        tiles = []
+        self.links = []
+        self.tiles = []
         for i in range(w):
             temp = []
             for j in range(h):
@@ -105,7 +106,7 @@ class Maze:
         #print('72')
         #print('setting ' + str(x) + ' ' + str(y))
         self.tiles[y][x].setRGB(r,g,b)
-        self.tiles[y][x].draw()
+        #self.tiles[y][x].draw()
 
     def getTile(self,x,y):
         if x < 0 or y < 0 or x >= TILEWIDTH or y >= TILEHEIGHT:
@@ -118,43 +119,46 @@ class MazeMaker:
         self.h = {}
 
     def mazify(self, m):
-        self.visit(0,0,m)
+        self.visit(int(TILEWIDTH/2),int(TILEHEIGHT/2),m)
 
     def visit(self,x,y,m):
-        #print('VISITING ' + str(x) + ' ' + str(y))
+        print('VISITING ' + str(x) + ' ' + str(y))
         if m.getTile(x,y) == 0:
             #print('invalid')
             return
+        print('128')
         m.set(x,y,255,255,255)
         self.h[m.getTile(x,y)] = randint(0,1000)
-        j = list(range(4))
+        j = [0,1,2,3]
         random.shuffle(j)
         for i in j:
-            #print('199')
+            print('199')
             if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
-                #print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
+                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
                 m.getTile(x,y).setLink(0)
                 m.getTile(x,y-1).setLink(2)
                 m.draw()
                 self.visit(x,y-1,m)
             elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
-                #print('linking ' + str(x) + str(y) + ' and ' + str(x+1) + str(y))
+                print('linking ' + str(x) + str(y) + ' and ' + str(x+1) + str(y))
                 m.getTile(x,y).setLink(1)
                 m.getTile(x+1,y).setLink(3)
                 m.draw()
                 self.visit(x+1,y,m)
             elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
-                #print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y+1))
+                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y+1))
                 m.getTile(x,y).setLink(2)
                 m.getTile(x,y+1).setLink(0)
                 m.draw()
                 self.visit(x,y+1,m)
             elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
-                #print('linking ' + str(x) + str(y) + ' and ' + str(x-1) + str(y))
+                print('linking ' + str(x) + str(y) + ' and ' + str(x-1) + str(y))
                 m.getTile(x,y).setLink(3)
                 m.getTile(x-1,y).setLink(1)
                 m.draw()
                 self.visit(x-1,y,m)
+            else:
+                m.draw()
 
 
 def main():
@@ -166,8 +170,6 @@ def main():
     M = [Maze(TILEWIDTH, TILEHEIGHT)]
     #print('134')
     M[0].draw()
-    makers = [MazeMaker()]
-    num = 0
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -175,10 +177,9 @@ def main():
                 run = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
-
-                    maker = makers[num]
+                    WIN.fill((255,255,255))
+                    maker = MazeMaker()
                     maker.mazify(M[0])
-                    M.pop(0)
+                    #M.pop(0)
         pygame.display.update()
-window.mainloop()
 main()
