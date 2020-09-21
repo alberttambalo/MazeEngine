@@ -12,7 +12,7 @@ window.geometry("300x100")
 
 def inputCheck():
     input = str(entryField1.get())
-    if int(input, 10) <= 0 or int(input,10) % 2 != 0:
+    if int(input, 10) <= 0:
        warning = tk.Label(text="Invalid input!")
        warning.grid(column=0,row=3)
        return
@@ -23,7 +23,7 @@ def inputCheck():
     return
 
 #label
-label = tk.Label(text="Enter size of square")
+label = tk.Label(text="Enter size of maze")
 label.grid(column=0,row=0)
 
 #entryfields
@@ -53,7 +53,7 @@ class Tile:
     def draw(self):
         xcoor = self.x * (WIDTH/TILEWIDTH)
         ycoor = self.y * (HEIGHT/TILEHEIGHT)
-        print('drawing ' + str(xcoor) + ' ' + str(ycoor) + ' ' + str(self.r) + str(self.g) + str(self.b) + str(self.links))
+        #print('drawing ' + str(xcoor) + ' ' + str(ycoor) + ' ' + str(self.r) + str(self.g) + str(self.b) + str(self.links))
         pygame.draw.rect(WIN,(self.r,self.g,self.b),(xcoor,ycoor, WIDTH/TILEWIDTH, HEIGHT/TILEHEIGHT))
         if self.links[0] == 1:
             pygame.draw.line(WIN,(0,0,0),(xcoor,ycoor),(xcoor + (WIDTH/TILEWIDTH),ycoor), 2)
@@ -121,37 +121,37 @@ class MazeMaker:
         self.visit(int(TILEWIDTH/2),int(TILEHEIGHT/2),m)
 
     def visit(self,x,y,m):
-        print('VISITING ' + str(x) + ' ' + str(y))
+        #print('VISITING ' + str(x) + ' ' + str(y))
         if m.getTile(x,y) == 0:
             #print('invalid')
             return
-        print('128')
+        #print('128')
         m.set(x,y,255,255,255)
         self.h[m.getTile(x,y)] = randint(0,1000)
         j = [0,1,2,3]
         random.shuffle(j)
         for i in j:
-            print('199')
+            #print('199')
             if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
-                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
+                #print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
                 m.getTile(x,y).setLink(0)
                 m.getTile(x,y-1).setLink(2)
                 m.draw()
                 self.visit(x,y-1,m)
             elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
-                print('linking ' + str(x) + str(y) + ' and ' + str(x+1) + str(y))
+                #print('linking ' + str(x) + str(y) + ' and ' + str(x+1) + str(y))
                 m.getTile(x,y).setLink(1)
                 m.getTile(x+1,y).setLink(3)
                 m.draw()
                 self.visit(x+1,y,m)
             elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
-                print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y+1))
+                #print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y+1))
                 m.getTile(x,y).setLink(2)
                 m.getTile(x,y+1).setLink(0)
                 m.draw()
                 self.visit(x,y+1,m)
             elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
-                print('linking ' + str(x) + str(y) + ' and ' + str(x-1) + str(y))
+                #print('linking ' + str(x) + str(y) + ' and ' + str(x-1) + str(y))
                 m.getTile(x,y).setLink(3)
                 m.getTile(x-1,y).setLink(1)
                 m.draw()
@@ -161,53 +161,79 @@ class MazeMaker:
 
 class MazeSolver():
     h = {}
+    path = []
     def solve(self, m):
         for i in m.tiles:
             for j in i:
                 self.h[j] = [11111111,0]
         self.visit(0,0,0,m)
 
+    def drawPath(self,m):
+
+        for i in self.path:
+            clock.tick(10)
+            i.setRGB(255,0,0)
+            i.draw()
+
     def visit(self,x,y,n,m):
-        print('VISITING ' + str(x) + str(y) + str(m.getTile(x, y).links))
+        #print('VISITING ' + str(x) + str(y) + str(m.getTile(x, y).links))
+        m.getTile(x,y).setRGB(255,0,0)
+        m.draw()
         if n == 0:
             self.h[m.getTile(x,y)][0] = 0
+            self.h[m.getTile(x, y)][1] = m.getTile(0,0)
         global TILEWIDTH, TILEHEIGHT
         if x == TILEWIDTH - 1 and y == TILEHEIGHT - 1:
-            path = []
-            path.append(m.getTile(x,y))
+
+            self.path.append(m.getTile(x,y))
             while True:
-                path.append(self.h[m.getTile(x,y)][1])
-                if self.h[m.getTile(x,y)][1] == m.getTile(0,0):
+                #print('179')
+                self.path.append(self.h[m.getTile(x,y)][1])
+                #print('appended ' + str(self.h[m.getTile(x, y)][1].x) + str(self.h[m.getTile(x, y)][1].y))
+                if x == 0 and y == 0:
                     break
+                tempx = self.h[m.getTile(x, y)][1].x
+                tempy = self.h[m.getTile(x, y)][1].y
+                x = tempx
+                y = tempy
+            return
         #random.shuffle(j)
 
         for i in range(4):
-            if i == 0 and m.getTile(x,y-1) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x,y-1)][0] and m.getTile(x,y).links[0] != 1:
-                print('n')
+            if i == 0 and m.getTile(x,y-1) in self.h and self.h[m.getTile(x,y)][0]+1 < self.h[m.getTile(x,y-1)][0] and m.getTile(x,y).links[0] != 1:
+                #print('n')
                 self.h[m.getTile(x,y-1)][0] = self.h[m.getTile(x,y)][0] + 1
-                self.h[m.getTile(x,y-1)][1] = self.h[m.getTile(x,y)]
+                self.h[m.getTile(x,y-1)][1] = m.getTile(x,y)
+                #print(str(x) + str(y) + " to " + str(x) + str(y-1))
                 self.visit(x,y-1,n+1,m)
-            elif i == 1 and m.getTile(x+1,y) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x+1,y)][0] and m.getTile(x,y).links[1] != 1:
-                print('e')
+            elif i == 1 and m.getTile(x+1,y) in self.h and self.h[m.getTile(x,y)][0]+1 < self.h[m.getTile(x+1,y)][0] and m.getTile(x,y).links[1] != 1:
+                #print('e')
                 self.h[m.getTile(x+1,y)][0] = self.h[m.getTile(x,y)][0] + 1
-                self.h[m.getTile(x+1,y)][1] = self.h[m.getTile(x, y)]
+                self.h[m.getTile(x+1,y)][1] = m.getTile(x,y)
+                #print(str(x) + str(y) + " to " + str(x+1) + str(y))
                 self.visit(x+1,y,n+1,m)
-            elif i == 2 and m.getTile(x,y+1) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x,y+1)][0] and m.getTile(x,y).links[2] != 1:
-                print('s')
+            elif i == 2 and m.getTile(x,y+1) in self.h and self.h[m.getTile(x,y)][0]+1 < self.h[m.getTile(x,y+1)][0] and m.getTile(x,y).links[2] != 1:
+                #print('s')
                 self.h[m.getTile(x,y+1)][0] = self.h[m.getTile(x,y)][0] + 1
-                self.h[m.getTile(x, y+1)][1] = self.h[m.getTile(x, y)]
+                self.h[m.getTile(x,y+1)][1] = m.getTile(x,y)
+                #print(str(x) + str(y) + " to " + str(x) + str(y+1))
                 self.visit(x,y+1,n+1,m)
-            elif i == 3 and m.getTile(x-1,y) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x-1,y)][0] and m.getTile(x,y).links[3] != 1:
-                print('w')
+            elif i == 3 and m.getTile(x-1,y) in self.h and self.h[m.getTile(x,y)][0]+1 < self.h[m.getTile(x-1,y)][0] and m.getTile(x,y).links[3] != 1:
+                #print('w')
                 self.h[m.getTile(x-1,y)][0] = self.h[m.getTile(x,y)][0] + 1
-                self.h[m.getTile(x-1, y)][1] = self.h[m.getTile(x, y)]
+                self.h[m.getTile(x-1, y)][1] = m.getTile(x,y)
+                #print(str(x) + str(y) + " to " + str(x-1) + str(y))
                 self.visit(x-1,y,n+1,m)
+        m.getTile(x, y).setRGB(255, 255, 255)
+        m.draw()
 
+
+clock = pygame.time.Clock()
 def main():
 
     run = True
-    FPS = 120
-    clock = pygame.time.Clock()
+    FPS = 10
+
     #print('HERE')
     M = Maze(TILEWIDTH, TILEHEIGHT)
     #print('134')
@@ -222,10 +248,12 @@ def main():
                     WIN.fill((255,255,255))
                     maker = MazeMaker()
                     maker.mazify(M)
+                    pygame.display.set_caption('Press Shift to Solve Maze')
                     #M.pop(0)
                 if event.key == pygame.K_RSHIFT:
-                    print('here')
+                    #print('here')
                     solver = MazeSolver()
                     solver.solve(M)
+                    solver.drawPath(M)
         pygame.display.update()
 main()
