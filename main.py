@@ -162,23 +162,46 @@ class MazeMaker:
 class MazeSolver():
     h = {}
     def solve(self, m):
-        self.visit(0,0,m,n)
+        for i in m.tiles:
+            for j in i:
+                self.h[j] = [11111111,0]
+        self.visit(0,0,0,m)
 
-    def visit(self,x,y,m,n):
-        m.getTile(x,y).setRGB(255,0,0)
-        m.getTile(x,y).draw()
-        self.h[m.getTile(x,y)] =  
-        j = [0, 1, 2, 3]
-        random.shuffle(j)
-        for i in j:
-            if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
-                self.visit(x,y-1,m)
-            elif j[i] == 1 and (m.getTile(x+1,y) not in self.h.keys()) and m.getTile(x+1,y) != 0:
-                self.visit(x+1,y,m)
-            elif j[i] == 2 and (m.getTile(x,y+1) not in self.h.keys()) and m.getTile(x,y+1) != 0:
-                self.visit(x,y+1,m)
-            elif j[i] == 3 and (m.getTile(x-1,y) not in self.h.keys()) and m.getTile(x-1,y) != 0:
-                self.visit(x-1,y,m)
+    def visit(self,x,y,n,m):
+        print('VISITING ' + str(x) + str(y) + str(m.getTile(x, y).links))
+        if n == 0:
+            self.h[m.getTile(x,y)][0] = 0
+        global TILEWIDTH, TILEHEIGHT
+        if x == TILEWIDTH - 1 and y == TILEHEIGHT - 1:
+            path = []
+            path.append(m.getTile(x,y))
+            while True:
+                path.append(self.h[m.getTile(x,y)][1])
+                if self.h[m.getTile(x,y)][1] == m.getTile(0,0):
+                    break
+        #random.shuffle(j)
+
+        for i in range(4):
+            if i == 0 and m.getTile(x,y-1) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x,y-1)][0] and m.getTile(x,y).links[0] != 1:
+                print('n')
+                self.h[m.getTile(x,y-1)][0] = self.h[m.getTile(x,y)][0] + 1
+                self.h[m.getTile(x,y-1)][1] = self.h[m.getTile(x,y)]
+                self.visit(x,y-1,n+1,m)
+            elif i == 1 and m.getTile(x+1,y) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x+1,y)][0] and m.getTile(x,y).links[1] != 1:
+                print('e')
+                self.h[m.getTile(x+1,y)][0] = self.h[m.getTile(x,y)][0] + 1
+                self.h[m.getTile(x+1,y)][1] = self.h[m.getTile(x, y)]
+                self.visit(x+1,y,n+1,m)
+            elif i == 2 and m.getTile(x,y+1) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x,y+1)][0] and m.getTile(x,y).links[2] != 1:
+                print('s')
+                self.h[m.getTile(x,y+1)][0] = self.h[m.getTile(x,y)][0] + 1
+                self.h[m.getTile(x, y+1)][1] = self.h[m.getTile(x, y)]
+                self.visit(x,y+1,n+1,m)
+            elif i == 3 and m.getTile(x-1,y) in self.h and self.h[m.getTile(x,y)][0] < self.h[m.getTile(x-1,y)][0] and m.getTile(x,y).links[3] != 1:
+                print('w')
+                self.h[m.getTile(x-1,y)][0] = self.h[m.getTile(x,y)][0] + 1
+                self.h[m.getTile(x-1, y)][1] = self.h[m.getTile(x, y)]
+                self.visit(x-1,y,n+1,m)
 
 def main():
 
