@@ -2,7 +2,7 @@ import pygame
 import random
 from random import randint
 import tkinter as tk
-WIDTH, HEIGHT = 500, 500
+WIDTH, HEIGHT = 900, 900
 TILEWIDTH, TILEHEIGHT = 10, 10
 
 
@@ -112,6 +112,8 @@ class Maze:
             return 0
         return self.tiles[y][x]
 
+
+
 class MazeMaker:
     h = {}
     def __init__(self):
@@ -120,7 +122,11 @@ class MazeMaker:
     def mazify(self, m):
         self.visit(int(TILEWIDTH/2),int(TILEHEIGHT/2),m)
 
+
+
     def visit(self,x,y,m):
+
+        curr = m.getTile(x,y)
         #print('VISITING ' + str(x) + ' ' + str(y))
         if m.getTile(x,y) == 0:
             #print('invalid')
@@ -158,6 +164,10 @@ class MazeMaker:
                 self.visit(x-1,y,m)
             else:
                 m.draw()
+        m.getTile(x,y).setRGB(250,250,250)
+        m.draw()
+        m.getTile(x,y).setRGB(255,255,255)
+        m.draw()
 
 class MazeSolver():
     h = {}
