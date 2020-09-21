@@ -1,15 +1,31 @@
 import pygame
-import time
 import random
 from random import randint
-import math
+import tkinter as tk
 
+window = tk.Tk()
+window.title("Maze Engine")
+window.geometry("500x500")
+
+label = tk.Label(text="Enter size of square")
+label.grid(column=0,row=0)
+
+entryField1 = tk.Entry()
+entryField1.grid(column=0,row=1)
+
+button1 = tk.Button(text="Generate Maze")
+button1.grid(column=0,row=2)
+
+
+
+
+window.mainloop()
 
 pygame.init()
 
 WIDTH, HEIGHT = 500, 500
-TILEWIDTH, TILEHEIGHT = 20, 20
-WIN = pygame.display.set_mode((WIDTH,HEIGHT))
+TILEWIDTH, TILEHEIGHT = 10, 10
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 class Tile:
     def __init__(self,x,y,r,g,b):
         self.x = x
@@ -43,10 +59,22 @@ class Tile:
         self.g = g
         self.b = b
 
+    def resetLinks(self):
+        self.links = [0,1,2,3]
+
 class Maze:
     tiles = []
     links = []
+    def reset(self):
+        for i in range(len(self.tiles)):
+            for j in self.tiles[i]:
+                j.setRGB(randint(0,255),randint(0,255), randint(0,255))
+                j.resetLinks()
+
+
     def __init__(self,w,h):
+        links = []
+        tiles = []
         for i in range(w):
             temp = []
             for j in range(h):
@@ -59,6 +87,7 @@ class Maze:
                 j.draw()
 
     def set(self,x,y,r,g,b):
+        #print('72')
         #print('setting ' + str(x) + ' ' + str(y))
         self.tiles[y][x].setRGB(r,g,b)
         self.tiles[y][x].draw()
@@ -70,6 +99,9 @@ class Maze:
 
 class MazeMaker:
     h = {}
+    def __init__(self):
+        self.h = {}
+
     def mazify(self, m):
         self.visit(0,0,m)
 
@@ -83,6 +115,7 @@ class MazeMaker:
         j = list(range(4))
         random.shuffle(j)
         for i in j:
+            #print('199')
             if j[i] == 0 and (m.getTile(x,y-1) not in self.h.keys()) and m.getTile(x,y-1) != 0:
                 #print('linking ' + str(x) + str(y) + ' and ' + str(x) + str(y-1))
                 m.getTile(x,y).setLink(0)
@@ -110,12 +143,16 @@ class MazeMaker:
 
 
 def main():
+
     run = True
     FPS = 120
     clock = pygame.time.Clock()
-    print('HERE')
-    M = Maze(TILEWIDTH, TILEHEIGHT)
-    M.draw()
+    #print('HERE')
+    M = [Maze(TILEWIDTH, TILEHEIGHT)]
+    #print('134')
+    M[0].draw()
+    makers = [MazeMaker()]
+    num = 0
     while run:
         clock.tick(FPS)
         for event in pygame.event.get():
@@ -124,10 +161,9 @@ def main():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_RETURN:
 
-                    maker = MazeMaker()
-                    maker.mazify(M)
-                    break
-
+                    maker = makers[num]
+                    maker.mazify(M[0])
+                    M.pop(0)
         pygame.display.update()
-
+window.mainloop()
 main()
