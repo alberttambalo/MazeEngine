@@ -5,9 +5,5 @@ Overview<br/>
 >*Tkinter module was used for the user prompt window<br/>
 >*Enter the size of the maze, press enter to draw, press shift to solve.
 
-Screenshots<br/>
-![](Progress/Dijkstra.JPG)
-![](Progress/FirstMaze.JPG)
-![](Progress/SizeSelectionUI.JPG)
-![](Progress/TileBorders.JPG)
-![](Progress/Tiling.JPG)
+Demo<br/>
+![](MazeEngineDemo.gif)
